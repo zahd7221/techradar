@@ -1,0 +1,30 @@
+name: Daily TechRadar (3 articles)
+
+on:
+  schedule:
+    - cron: '0 5 * * *'   # 09:00 UAE
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Generate articles
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python scripts/generate.py
+      - name: Commit & push
+        run: |
+          git config user.name "techradar-bot"
+          git config user.email "bot@techradar"
+          git add src/content/articles
+          if git diff --cached --quiet; then echo "no changes"; exit 0; fi
+          git commit -m "Daily articles $(date -u +%F)"
+          git push
