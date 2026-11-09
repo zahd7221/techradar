@@ -78,12 +78,38 @@ else:
 
 if not articles:
     articles = []
-    for x in repos[:2]:
+    for x in repos:
         if "error" in x: continue
-        articles.append({"title": f"أداة OSS: {x['name']}", "slug": x["name"].split("/")[-1].lower(), "category": "oss-tool", "summary": (x.get("desc") or "")[:120], "tags": ["OSS", "GitHub"], "body": f"مستودع جديد على GitHub: {x['name']} ({x.get('stars',0)} ⭐).\n\n{x.get('desc','')}\n\nرابط: {x['url']}", "sources": [x["url"]]})
-    for x in papers[:1]:
+        desc = (x.get("desc") or "").strip()
+        # keep only ASCII descriptions (avoid Chinese/garbage)
+        if desc and not all(ord(c) < 128 for c in desc):
+            desc = ""
+        if not desc:
+            desc = "مستودع جديد على GitHub (وصف غير متوفر)."
+        slug = x["name"].split("/")[-1].lower()
+        slug = re.sub(r"[^a-z0-9-]", "", slug) or "repo"
+        articles.append({
+            "title": f"أداة OSS: {x['name']}",
+            "slug": slug + "-" + str(len(articles)),
+            "category": "oss-tool",
+            "summary": f"مستودع جديد ({x.get('stars',0)} ⭐). {desc[:80]}",
+            "tags": ["OSS", "GitHub"],
+            "body": f"## {x['name']}\n\n{x.get('stars',0)} ⭐ على GitHub.\n\n{desc}\n\n**الرابط:** {x['url']}",
+            "sources": [x["url"]]
+        })
+        if len(articles) >= 2: break
+    for x in papers:
         if "error" in x: continue
-        articles.append({"title": f"ورقة بحث: {x['title'][:60]}", "slug": "paper-" + str(len(articles)), "category": "news", "summary": "ورقة بحث حديثة من arXiv (cs.AI).", "tags": ["research", "AI"], "body": f"عنوان: {x['title']}\n\nرابط: {x['url']}", "sources": [x["url"]]})
+        articles.append({
+            "title": f"ورقة بحث: {x['title'][:70]}",
+            "slug": "paper-" + str(len(articles)),
+            "category": "news",
+            "summary": "ورقة بحث حديثة في الذكاء الاصطناعي (arXiv cs.AI).",
+            "tags": ["research", "AI"],
+            "body": f"## {x['title']}\n\nورقة بحث حديثة من arXiv (cs.AI).\n\n**الرابط:** {x['url']}",
+            "sources": [x["url"]]
+        })
+        if len(articles) >= 3: break
     if not articles:
         articles = [{"title": "TechRadar — لا بيانات", "slug": "empty", "category": "news", "summary": "لا توجد بيانات.", "tags": ["info"], "body": "حاول لاحقاً.", "sources": []}]
 

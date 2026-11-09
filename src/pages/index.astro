@@ -12,7 +12,7 @@ posts.sort((a,b) => new Date(b.frontmatter.date) - new Date(a.frontmatter.date))
   {posts.length === 0 && <p>لا توجد مقالات بعد. سيتم النشر قريباً.</p>}
   {posts.map((p) => (
     <article>
-      <h2><a href={`${import.meta.env.BASE_URL}articles/${p.slug}/`}>{p.frontmatter.title}</a></h2>
+      <h2><a href={`${import.meta.env.BASE_URL}/articles/${p.slug}/`}>{p.frontmatter.title}</a></h2>
       <div class="meta">{p.frontmatter.date} · {p.frontmatter.category}</div>
       <p>{p.frontmatter.summary}</p>
       {p.frontmatter.tags?.map((t) => <span class="tag">{t}</span>)}

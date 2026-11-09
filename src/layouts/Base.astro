@@ -12,24 +12,33 @@ const { title = 'TechRadar' } = Astro.props;
     <meta property="og:type" content="website" />
     <title>{title}</title>
     <style>
-      :root { --fg:#1a1a1a; --muted:#555; --accent:#2563eb; --bg:#fafafa; --card:#fff; --border:#e5e7eb; }
+      :root { --fg:#1f2937; --muted:#6b7280; --accent:#2563eb; --bg:#f3f4f6; --card:#ffffff; --border:#e5e7eb; --accent2:#7c3aed; }
       * { box-sizing: border-box; }
-      body { margin:0; font-family: system-ui, 'Segoe UI', Tahoma, sans-serif; background:var(--bg); color:var(--fg); line-height:1.7; }
-      header { background:var(--card); border-bottom:1px solid var(--border); padding:1rem 1.5rem; }
-      header h1 { margin:0; font-size:1.5rem; color:var(--accent); }
-      main { max-width:900px; margin:2rem auto; padding:0 1rem; }
-      article { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:1.5rem; margin-bottom:1.5rem; }
-      article h2 { margin-top:0; }
+      body { margin:0; font-family: 'Segoe UI', Tahoma, system-ui, sans-serif; background:var(--bg); color:var(--fg); line-height:1.8; }
+      header { background:linear-gradient(135deg,#2563eb,#7c3aed); color:#fff; padding:2rem 1.5rem; text-align:center; }
+      header h1 { margin:0; font-size:2rem; }
+      header p { margin:.5rem 0 0; opacity:.9; }
+      nav { display:flex; gap:1rem; justify-content:center; margin-top:1rem; }
+      nav a { color:#fff; text-decoration:none; opacity:.9; }
+      nav a:hover { opacity:1; text-decoration:underline; }
+      main { max-width:960px; margin:2rem auto; padding:0 1rem; }
+      article { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:1.5rem; margin-bottom:1.5rem; box-shadow:0 2px 8px rgba(0,0,0,.04); transition:transform .15s,box-shadow .15s; }
+      article:hover { transform:translateY(-2px); box-shadow:0 6px 16px rgba(0,0,0,.08); }
+      article h2 { margin:0 0 .5rem; font-size:1.25rem; }
       article h2 a { color:var(--fg); text-decoration:none; }
       article h2 a:hover { color:var(--accent); }
-      .meta { color:var(--muted); font-size:.85rem; }
-      .tag { display:inline-block; background:#eef2ff; color:var(--accent); padding:.15rem .5rem; border-radius:6px; font-size:.75rem; margin-inline-end:.5rem; }
-      footer { text-align:center; color:var(--muted); padding:2rem; font-size:.85rem; }
+      article h1 { color:var(--accent); }
+      .meta { color:var(--muted); font-size:.85rem; margin-bottom:.75rem; }
+      .tag { display:inline-block; background:#eef2ff; color:var(--accent); padding:.2rem .6rem; border-radius:8px; font-size:.75rem; margin-inline-end:.4rem; margin-top:.5rem; }
+      footer { text-align:center; color:var(--muted); padding:2rem; font-size:.85rem; border-top:1px solid var(--border); margin-top:2rem; }
       a { color:var(--accent); }
+      hr { border:none; border-top:1px solid var(--border); margin:1.5rem 0; }
+      code { background:#f3f4f6; padding:.1rem .4rem; border-radius:4px; font-size:.9em; }
     </style>
   </head>
   <body>
-    <header><h1>📡 TechRadar</h1><p style="margin:.25rem 0 0;color:var(--muted);font-size:.9rem;">أخبار الذكاء الاصطناعي + أدوات مفتوحة المصدر (يومياً)</p></header>
+    <header><h1>📡 TechRadar</h1><p>أخبار الذكاء الاصطناعي + أدوات مفتوحة المصدر — 3 مقالات يومياً</p>
+      <nav><a href={`${import.meta.env.BASE_URL}/`}>الرئيسية</a><a href={`${import.meta.env.BASE_URL}/rss.xml`}>RSS</a></nav></header>
     <main><slot /></main>
     <footer>TechRadar — محتوى مُولَّد آلياً مع مصادر. OSS/مجاني 100%.</footer>
   </body>
