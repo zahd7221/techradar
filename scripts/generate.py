@@ -90,7 +90,7 @@ if not articles:
         slug = re.sub(r"[^a-z0-9-]", "", slug) or "repo"
         articles.append({
             "title": f"أداة OSS: {x['name']}",
-            "slug": slug + "-" + str(len(articles)),
+            "slug": slug,
             "category": "oss-tool",
             "summary": f"مستودع جديد ({x.get('stars',0)} ⭐). {desc[:80]}",
             "tags": ["OSS", "GitHub"],
@@ -116,6 +116,13 @@ if not articles:
 for a in articles:
     slug = re.sub(r"[^a-z0-9-]", "", a["slug"].lower()) or "article"
     fname = OUT / f"{today}-{slug}.md"
+    if fname.exists():
+        i = 1
+        while (OUT / f"{today}-{slug}-{i}.md").exists():
+            i += 1
+        slug = f"{slug}-{i}"
+        fname = OUT / f"{today}-{slug}.md"
+    a["slug"] = slug
     tags = ", ".join(f'"{t}"' for t in a.get("tags", []))
     sources = "\n".join(f"- {s}" for s in a.get("sources", []))
     content = f"""---
