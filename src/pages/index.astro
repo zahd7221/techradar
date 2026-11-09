@@ -1,0 +1,18 @@
+---
+import Base from '../layouts/Base.astro';
+const modules = import.meta.glob('../content/articles/*.md', { eager: true });
+const posts = Object.values(modules).map((m) => ({ frontmatter: m.frontmatter, url: m.url }));
+posts.sort((a,b) => new Date(b.frontmatter.date) - new Date(a.frontmatter.date));
+---
+<Base title="TechRadar — أخبار AI يومياً">
+  <h2 style="margin-top:0">آخر المقالات</h2>
+  {posts.length === 0 && <p>لا توجد مقالات بعد. سيتم النشر قريباً.</p>}
+  {posts.map((p) => (
+    <article>
+      <h2><a href={p.url}>{p.frontmatter.title}</a></h2>
+      <div class="meta">{p.frontmatter.date} · {p.frontmatter.category}</div>
+      <p>{p.frontmatter.summary}</p>
+      {p.frontmatter.tags?.map((t) => <span class="tag">{t}</span>)}
+    </article>
+  ))}
+</Base>
