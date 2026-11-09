@@ -6,7 +6,8 @@ OUT.mkdir(parents=True, exist_ok=True)
 today = datetime.date.today().isoformat()
 
 def gh_search():
-    q = f"created:>{today} stars:>20"
+    seven_days_ago = (datetime.date.today() - datetime.timedelta(days=7)).isoformat()
+    q = f"created:>{seven_days_ago} stars:>5"
     url = "https://api.github.com/search/repositories?q=" + urllib.parse.quote(q) + "&sort=stars&order=desc&per_page=8"
     req = urllib.request.Request(url, headers={"Authorization": f"Bearer {TOKEN}", "Accept": "application/vnd.github+json"})
     try:
@@ -57,10 +58,12 @@ try:
         headers={"Authorization": f"Bearer {TOKEN}", "Content-Type": "application/json", "Accept": "application/vnd.github+json"},
     )
     with urllib.request.urlopen(req, timeout=120) as r:
-        resp = json.load(r)
+        raw = r.read().decode()
+    print("LLM raw:", raw[:500])
+    resp = json.loads(raw)
     text = resp["choices"][0]["message"]["content"].strip()
 except Exception as e:
-    print("LLM failed, fallback:", e)
+    print("LLM failed, fallback:", repr(e))
     text = None
 
 if text:
