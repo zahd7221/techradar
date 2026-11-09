@@ -59,7 +59,6 @@ try:
     )
     with urllib.request.urlopen(req, timeout=120) as r:
         raw = r.read().decode()
-    print("LLM raw:", raw[:500])
     resp = json.loads(raw)
     text = resp["choices"][0]["message"]["content"].strip()
 except Exception as e:
