@@ -50,18 +50,40 @@ Rules:
 - Output ONLY valid JSON array, no markdown fences.
 """
 
-req = urllib.request.Request(
-    "https://models.inference.ai.azure.com/chat/completions",
-    data=json.dumps({"model": "gpt-4o-mini", "messages": [{"role": "user", "content": prompt}], "temperature": 0.4}).encode(),
-    headers={"Authorization": f"Bearer {TOKEN}", "Content-Type": "application/json"},
-)
-with urllib.request.urlopen(req, timeout=120) as r:
-    resp = json.load(r)
-text = resp["choices"][0]["message"]["content"].strip()
-# strip fences if any
-text = re.sub(r"^```(?:json)?\s*", "", text)
-text = re.sub(r"\s*```$", "", text)
-articles = json.loads(text)
+try:
+    req = urllib.request.Request(
+        "https://models.github.ai/inference/chat/completions",
+        data=json.dumps({"model": "openai/gpt-4o-mini", "messages": [{"role": "user", "content": prompt}], "temperature": 0.4, "max_tokens": 2000}).encode(),
+        headers={"Authorization": f"Bearer {TOKEN}", "Content-Type": "application/json", "Accept": "application/vnd.github+json"},
+    )
+    with urllib.request.urlopen(req, timeout=120) as r:
+        resp = json.load(r)
+    text = resp["choices"][0]["message"]["content"].strip()
+except Exception as e:
+    print("LLM failed, fallback:", e)
+    text = None
+
+if text:
+    text = re.sub(r"^```(?:json)?\s*", "", text)
+    text = re.sub(r"\s*```$", "", text)
+    try:
+        articles = json.loads(text)
+    except Exception as e:
+        print("JSON parse failed, fallback:", e)
+        articles = None
+else:
+    articles = None
+
+if not articles:
+    articles = []
+    for x in repos[:2]:
+        if "error" in x: continue
+        articles.append({"title": f"أداة OSS: {x['name']}", "slug": x["name"].split("/")[-1].lower(), "category": "oss-tool", "summary": (x.get("desc") or "")[:120], "tags": ["OSS", "GitHub"], "body": f"مستودع جديد على GitHub: {x['name']} ({x.get('stars',0)} ⭐).\n\n{x.get('desc','')}\n\nرابط: {x['url']}", "sources": [x["url"]]})
+    for x in papers[:1]:
+        if "error" in x: continue
+        articles.append({"title": f"ورقة بحث: {x['title'][:60]}", "slug": "paper-" + str(len(articles)), "category": "news", "summary": "ورقة بحث حديثة من arXiv (cs.AI).", "tags": ["research", "AI"], "body": f"عنوان: {x['title']}\n\nرابط: {x['url']}", "sources": [x["url"]]})
+    if not articles:
+        articles = [{"title": "TechRadar — لا بيانات", "slug": "empty", "category": "news", "summary": "لا توجد بيانات.", "tags": ["info"], "body": "حاول لاحقاً.", "sources": []}]
 
 for a in articles:
     slug = re.sub(r"[^a-z0-9-]", "", a["slug"].lower()) or "article"
