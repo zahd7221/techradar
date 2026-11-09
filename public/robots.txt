@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://zahd7221.github.io/techradar/sitemap-index.xml

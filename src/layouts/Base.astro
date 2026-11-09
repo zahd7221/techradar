@@ -6,6 +6,10 @@ const { title = 'TechRadar' } = Astro.props;
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="TechRadar — أخبار الذكاء الاصطناعي والأدوات مفتوحة المصدر، 3 مقالات يومياً." />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content="أخبار AI + أدوات OSS (مجانية)" />
+    <meta property="og:type" content="website" />
     <title>{title}</title>
     <style>
       :root { --fg:#1a1a1a; --muted:#555; --accent:#2563eb; --bg:#fafafa; --card:#fff; --border:#e5e7eb; }
